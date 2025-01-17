@@ -1,1 +1,2 @@
-export * from "./discourseSync";
+const mutations = {};
+export default mutations;
