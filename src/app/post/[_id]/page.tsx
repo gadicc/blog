@@ -20,6 +20,8 @@ export default async function Post({
   params: Promise<{ _id: string }>;
 }) {
   const { _id } = await params;
+  if (!_id) return "No _id provided";
+
   const post = await getPost(_id);
   const session = await auth();
   const admin = session?.user?.admin;

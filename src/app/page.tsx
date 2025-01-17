@@ -30,7 +30,7 @@ function PostRow({ post }: { post: Post }) {
 }
 
 async function Index() {
-  const posts = await getPosts();
+  const posts = process.env.MONGO_URL ? await getPosts() : [];
 
   return (
     <Container>
