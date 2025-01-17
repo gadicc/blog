@@ -41,7 +41,7 @@ import {
 } from "@mui/icons-material";
 
 // import Link from "@/lib/link";
-import db, { enableNetwork } from "@/db";
+import db from "@/db";
 import pathnames, { PathnameValue } from "./pathnames";
 import NextLink from "next/link";
 // import { SITE_TITLE } from "@/api-lib/consts";
@@ -96,7 +96,8 @@ export function UserAvatar({
   const user = useGongoOne((db) =>
     db.collection("users").find({ _id: userId })
   );
-  const avatarSrc = user?.image || user?.photos?.[0]?.value;
+  const avatarSrc: string =
+    (user?.image as string) || user?.photos?.[0]?.value || "";
 
   return avatarSrc ? (
     <Avatar
@@ -463,13 +464,8 @@ export default function ButtonAppBar() {
                   </Menu>
                 </span>
               ) : (
-                <IconButton
-                  sx={{ color: "white" }}
-                  onClick={() => {
-                    if (!network) enableNetwork();
-                    signIn();
-                  }}
-                >
+                // @ts-expect-error: it's fine
+                <IconButton sx={{ color: "white" }} onClick={signIn}>
                   <Login />
                 </IconButton>
               )}
