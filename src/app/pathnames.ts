@@ -13,7 +13,7 @@ export type PathnameValue =
 const pathnames: {
   [key: string]: PathnameValue | typeof pathnames;
 } = {
-  "/": "Gadi's Blog",
+  "/": "Home",
 };
 
 export default pathnames;

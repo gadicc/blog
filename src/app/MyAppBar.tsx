@@ -46,6 +46,7 @@ import pathnames, { PathnameValue } from "./pathnames";
 import NextLink from "next/link";
 // import { SITE_TITLE } from "@/api-lib/consts";
 const SITE_TITLE = "Gadi's Blog";
+import gadiFace from "@/app/gadi-face.jpg";
 
 function usePathnameInfo() {
   const pathname = usePathname();
@@ -127,14 +128,22 @@ function MenuDrawer({
   return (
     <Box onClick={handleDrawerToggle}>
       <Typography variant="h6" sx={{ my: 2, mx: 2, textAlign: "left" }}>
-        <Image
-          src="/pentagram.png"
-          alt="Pentagram"
-          width={32}
-          height={32}
-          style={{ verticalAlign: "middle", marginRight: 12 }}
-        />
-        <span style={{ verticalAlign: "middle" }}>Blog</span>
+        <Avatar
+          sx={{
+            display: "inline-block",
+            verticalAlign: "middle",
+            marginRight: 1.5,
+            border: "1px solid #999",
+          }}
+        >
+          <Image
+            src={gadiFace}
+            alt="Face"
+            fill
+            style={{ verticalAlign: "middle" }}
+          />
+        </Avatar>
+        <span style={{ verticalAlign: "middle" }}>Gadi&apos;s Blog</span>
       </Typography>
       <Divider />
       <List>

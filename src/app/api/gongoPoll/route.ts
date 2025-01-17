@@ -67,6 +67,15 @@ gs.publish("users", async (db, opts, { auth }) => {
 });
 */
 
+gs.publish("post", async (db, opts) => {
+  // const session = await auth();
+  const strId = opts._id as string;
+  if (!strId) return [];
+
+  const _id = new ObjectId(strId);
+  return db.collection("posts").find({ _id });
+});
+
 if (gs.dba) {
   const db = gs.dba;
 

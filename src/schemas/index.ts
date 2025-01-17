@@ -1,5 +1,3 @@
-export * from "./doc";
+export * from "./post";
+export * from "./postRevision";
 export * from "./user";
-export * from "./userGroup";
-export * from "./temple";
-export * from "./templeMembership";
