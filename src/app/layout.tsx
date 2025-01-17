@@ -9,10 +9,10 @@ import MyAppBar from "./MyAppBar";
 import ClientProviders from "./clientProviders";
 import "@/db";
 
-const APP_NAME = "Magick.ly";
-const APP_DEFAULT_TITLE = "Magick.ly";
+const APP_NAME = "Gadi's Blog";
+const APP_DEFAULT_TITLE = "Gadi's Blog";
 const APP_TITLE_TEMPLATE = "%s - PWA App";
-const APP_DESCRIPTION = "Your Magick Toolkit";
+const APP_DESCRIPTION = "gadicc - tech, wellness, magick";
 
 export const metadata: Metadata = {
   manifest: "/manifest.json",
