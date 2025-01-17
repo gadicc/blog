@@ -1,8 +1,12 @@
-# magick.li
+# blog.gadi.cc
 
-_Open-source magick reference PWA_
+_gadi'ss blog software_
 
-Copyright (c) 2020 Gadi Cohen. MIT licensed.
+Copyright (c) 2025 Gadi Cohen. [MIT licensed](./LICENSE.txt).
+
+## Intro
+
+Because, I suck. Not Invented Here Syndrome. Software for my personal blog.
 
 ## Development
 
