@@ -30,7 +30,8 @@ function PostRow({ post }: { post: Post }) {
 }
 
 async function Index() {
-  const posts = process.env.MONGO_URL ? await getPosts() : [];
+  const posts =
+    process.env.NEXT_PHASE === "phase-production-build" ? [] : await getPosts();
 
   return (
     <Container>
