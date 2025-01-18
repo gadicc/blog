@@ -43,6 +43,7 @@ export default function PostEdit({
       setSrc(post.src);
       setTitle(post.title);
       setCreatedAt(dayjs(post.createdAt));
+      setTags(post.tags || []);
     }
   }, [post]);
 
