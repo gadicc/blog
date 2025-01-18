@@ -1,4 +1,5 @@
 import React from "react";
+import type { Metadata, ResolvingMetadata } from "next";
 import { unstable_cache } from "next/cache";
 import { db, ObjectId } from "@/api-lib/db";
 import RenderPost from "./renderPost";
@@ -18,11 +19,31 @@ function getPost(_id: string) {
   )();
 }
 
-export default async function PostPage({
-  params,
-}: {
+type Props = {
   params: Promise<{ _id: string }>;
-}) {
+  // searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+};
+
+export async function generateMetadata(
+  { params }: Props,
+  _parent: ResolvingMetadata
+): Promise<Metadata> {
+  const { _id } = await params;
+  const post = await getPost(_id);
+  if (!post) throw new Error("could not find post with _id: " + _id);
+
+  // optionally access and extend (rather than replace) parent metadata
+  // const previousImages = (await parent).openGraph?.images || [];
+
+  return {
+    title: post.title,
+    openGraph: {
+      // images: ["/some-specific-page-image.jpg", ...previousImages],
+    },
+  };
+}
+
+export default async function PostPage({ params }: Props) {
   const { _id } = await params;
   if (!_id) return "No _id provided";
 
