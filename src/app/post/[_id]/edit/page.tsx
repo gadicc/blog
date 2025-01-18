@@ -6,6 +6,8 @@ import db from "@/db";
 import { useRouter } from "next/navigation";
 import RenderPost from "../renderPost";
 import { useGongoOne, useGongoSub } from "gongo-client-react";
+import { DateTimePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
 
 const Posts = db.collection("posts");
 
@@ -16,6 +18,8 @@ export default function PostEdit({
 }) {
   const [src, setSrc] = React.useState("");
   const [title, setTitle] = React.useState("");
+  const [createdAt, setCreatedAt] = React.useState(dayjs());
+
   const session = useSession();
   const { _id } = React.use(params);
   const router = useRouter();
@@ -28,6 +32,7 @@ export default function PostEdit({
     if (post) {
       setSrc(post.src);
       setTitle(post.title);
+      setCreatedAt(dayjs(post.createdAt));
     }
   }, [post]);
 
@@ -51,7 +56,7 @@ export default function PostEdit({
           title,
           src,
           userId: userId as string,
-          createdAt: now,
+          createdAt: createdAt.toDate(),
           updatedAt: now,
           __ObjectIDs: ["userId"],
         };
@@ -60,12 +65,17 @@ export default function PostEdit({
         const _id = insertedDoc._id;
         router.push(`/post/${_id}/edit`);
       } else {
-        const doc = { title, src, updatedAt: now };
+        const doc = {
+          title,
+          src,
+          createdAt: createdAt.toDate(),
+          updatedAt: now,
+        };
         console.log("update", doc);
         Posts.update({ _id }, { $set: doc });
       }
     },
-    [title, src, _id, router, userId]
+    [title, src, _id, router, userId, createdAt]
   );
 
   if (session?.status !== "authenticated") return "Log in first";
@@ -90,6 +100,14 @@ export default function PostEdit({
               fullWidth
               sx={{ mb: 2 }}
             />
+            <DateTimePicker
+              label="Created at"
+              value={createdAt}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              onChange={setCreatedAt as any}
+              sx={{ mb: 2 }}
+            />
+            <br />
             <Button type="submit" variant="contained">
               Save
             </Button>
