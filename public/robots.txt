@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Host
-Host: https://magick.ly
+Host: https://blog.gadi.cc/
 
 # Sitemaps
-Sitemap: https://magick.ly/sitemap.xml
+Sitemap: https://blog.gadi.cc/sitemap.xml
