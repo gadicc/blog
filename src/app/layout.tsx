@@ -3,6 +3,7 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v14-appRouter";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import type { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/next";
 
 import theme from "@/theme";
 import MyAppBar from "./MyAppBar";
@@ -163,6 +164,7 @@ export default function RootLayout(props: { children: React.ReactNode }) {
                 <div style={{ height: 64 }}></div>
               </React.Suspense>
               {props.children}
+              <Analytics />
             </ClientProviders>
           </ThemeProvider>
         </AppRouterCacheProvider>
