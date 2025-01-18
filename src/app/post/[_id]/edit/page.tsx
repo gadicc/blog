@@ -10,6 +10,7 @@ import { DateTimePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 
 const Posts = db.collection("posts");
+const PostRevisions = db.collection("postRevisions");
 
 export default function PostEdit({
   params,
@@ -24,9 +25,11 @@ export default function PostEdit({
   const { _id } = React.use(params);
   const router = useRouter();
   const post = useGongoOne((db) => db.collection("posts").find({ _id }));
-  const userId = session.data?.user?._id?.toString();
-
   useGongoSub(_id !== "new" && "post", { _id });
+  useGongoSub(_id !== "new" && "postRevisions", { postId: _id });
+
+  const userId = session.data?.user?.id?.toString();
+  // console.log({ userId });
 
   React.useEffect(() => {
     if (post) {
@@ -48,6 +51,8 @@ export default function PostEdit({
   const save = React.useCallback(
     (e) => {
       e.preventDefault();
+      console.log({ userId });
+      if (!userId) throw new Error("no userId");
 
       const now = new Date();
 
@@ -55,7 +60,7 @@ export default function PostEdit({
         const doc = {
           title,
           src,
-          userId: userId as string,
+          userId,
           createdAt: createdAt.toDate(),
           updatedAt: now,
           __ObjectIDs: ["userId"],
@@ -63,6 +68,19 @@ export default function PostEdit({
         console.log(doc);
         const insertedDoc = Posts.insert(doc);
         const _id = insertedDoc._id;
+        if (!_id)
+          throw new Error(
+            "No _id for insertedDoc: " + JSON.stringify(insertedDoc)
+          );
+
+        PostRevisions.insert({
+          ...doc,
+          postId: _id,
+          revisionId: _id,
+          createdAt: now,
+          __ObjectIDs: ["userId", "postId"],
+        });
+
         router.push(`/post/${_id}/edit`);
       } else {
         const doc = {
@@ -73,6 +91,22 @@ export default function PostEdit({
         };
         console.log("update", doc);
         Posts.update({ _id }, { $set: doc });
+
+        const er = PostRevisions.findOne({
+          postId: _id,
+          createdAt: { $gt: new Date(now.getTime() - 5 * 60_000) },
+        });
+        if (er) {
+          PostRevisions.update({ _id: er._id }, { $set: doc });
+        } else {
+          PostRevisions.insert({
+            ...doc,
+            userId,
+            postId: _id,
+            createdAt: now,
+            __ObjectIDs: ["userId", "postId"],
+          });
+        }
       }
     },
     [title, src, _id, router, userId, createdAt]
