@@ -182,6 +182,7 @@ export default function PostEdit({
                 title,
                 src,
                 createdAt: createdAt.toDate(),
+                updatedAt: new Date(),
                 tags,
               }}
             />

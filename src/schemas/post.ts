@@ -6,6 +6,6 @@ export interface Post {
   src: string;
   userId: string;
   createdAt: Date;
-  updatedAt?: Date;
+  updatedAt: Date;
   tags?: string[];
 }
