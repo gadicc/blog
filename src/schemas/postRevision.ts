@@ -6,4 +6,5 @@ export interface PostRevision {
   createdAt: Date;
   updatedAt: Date;
   src: string;
+  tags?: string[];
 }

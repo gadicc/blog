@@ -1,6 +1,12 @@
 "use client";
 import React from "react";
-import { Button, Container, Grid2, TextField } from "@mui/material";
+import {
+  Autocomplete,
+  Button,
+  Container,
+  Grid2,
+  TextField,
+} from "@mui/material";
 import { useSession } from "next-auth/react";
 import db from "@/db";
 import { useRouter } from "next/navigation";
@@ -20,6 +26,7 @@ export default function PostEdit({
   const [src, setSrc] = React.useState("");
   const [title, setTitle] = React.useState("");
   const [createdAt, setCreatedAt] = React.useState(dayjs());
+  const [tags, setTags] = React.useState<string[]>([]);
 
   const session = useSession();
   const { _id } = React.use(params);
@@ -51,7 +58,6 @@ export default function PostEdit({
   const save = React.useCallback(
     (e) => {
       e.preventDefault();
-      console.log({ userId });
       if (!userId) throw new Error("no userId");
 
       const now = new Date();
@@ -61,6 +67,7 @@ export default function PostEdit({
           title,
           src,
           userId,
+          tags,
           createdAt: createdAt.toDate(),
           updatedAt: now,
           __ObjectIDs: ["userId"],
@@ -88,6 +95,7 @@ export default function PostEdit({
           src,
           createdAt: createdAt.toDate(),
           updatedAt: now,
+          tags,
         };
         console.log("update", doc);
         Posts.update({ _id }, { $set: doc });
@@ -109,7 +117,7 @@ export default function PostEdit({
         }
       }
     },
-    [title, src, _id, router, userId, createdAt]
+    [title, src, _id, router, userId, createdAt, tags]
   );
 
   if (session?.status !== "authenticated") return "Log in first";
@@ -142,12 +150,41 @@ export default function PostEdit({
               sx={{ mb: 2 }}
             />
             <br />
+            <Autocomplete
+              multiple
+              options={[]}
+              freeSolo
+              value={tags}
+              onChange={(event, newValue) => {
+                setTags(newValue);
+              }}
+              // getOptionLabel={(option) => option.title}
+              // defaultValue={[top100Films[13]]}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  variant="standard"
+                  label="Tags"
+                  // placeholder="Favorites"
+                />
+              )}
+            />
+            <br />
             <Button type="submit" variant="contained">
               Save
             </Button>
           </Grid2>
           <Grid2 size={6}>
-            <RenderPost post={{ title, src }} />
+            <RenderPost
+              post={{
+                _id,
+                userId: userId || "",
+                title,
+                src,
+                createdAt: createdAt.toDate(),
+                tags,
+              }}
+            />
           </Grid2>
         </Grid2>
       </form>

@@ -7,4 +7,5 @@ export interface Post {
   userId: string;
   createdAt: Date;
   updatedAt?: Date;
+  tags?: string[];
 }
