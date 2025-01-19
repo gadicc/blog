@@ -14,7 +14,7 @@ function getPost(_id: string) {
   return unstable_cache(
     // @ts-expect-error: TODO, client/server _id type mismatch
     () => Posts.findOne({ _id: new ObjectId(_id) }),
-    [_id],
+    undefined, // [_id],
     { revalidate: 60 } // 60s i.e. 1m
   )();
 }
