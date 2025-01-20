@@ -8,6 +8,7 @@ import { db } from "@/api-lib/db";
 import { Post } from "@/schemas";
 import Link from "@/lib/link";
 import { formatDate } from "@/lib/format";
+import { post2url } from "@/lib/posts";
 
 export const revalidate = 60;
 export const dynamicParams = true;
@@ -36,8 +37,8 @@ function PostRow({ post }: { post: Post }) {
   const src = isTruncated ? post.src.substring(0, TRUNCATE_LENGTH) : post.src;
 
   return (
-    <li>
-      <Link href={`/post/${post._id}`}>
+    <li style={{ marginBottom: 20 }}>
+      <Link href={post2url(post)}>
         <Typography variant="h5">{post.title}</Typography>
       </Link>
       <div>{formatDate(post.createdAt)}</div>
