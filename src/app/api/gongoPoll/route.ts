@@ -88,12 +88,52 @@ gs.publish("postRevisions", async (db, opts) => {
 if (gs.dba) {
   const db = gs.dba;
 
+  interface Counter {
+    _id: string;
+    count: number;
+  }
+  const Counters = await db.collection<Counter>("counters").getReal();
+  async function getCounter(name: string) {
+    const result = await Counters.findOneAndUpdate(
+      { _id: name },
+      { $inc: { count: 1 } },
+      { upsert: true, returnDocument: "after" }
+    );
+    return result?.count;
+  }
+
+  gs.method("getCounter", async (db, opts, { auth }) => {
+    const userId = await auth.userId();
+    if (!userId) return null;
+
+    const user = await db.collection("users").findOne({ _id: userId });
+    if (!user?.admin) return null;
+
+    if (typeof opts !== "string") return null;
+
+    const name = opts; // opts.name as string;
+    const result = await getCounter(name);
+    console.log({ name, result });
+    return result;
+  });
+
   for (const collName of ["users", "posts", "postRevisions"]) {
     const coll = db.collection(collName);
     coll.allow("insert", userIsAdmin);
     coll.allow("update", userIsAdmin);
     coll.allow("remove", userIsAdmin);
   }
+
+  const Posts = db.collection("posts");
+
+  // @ts-expect-error: gongo
+  Posts.on("preInsertMany", async (props, { entries }) => {
+    const coll = await Posts.getReal();
+
+    for (const doc of entries) {
+      doc.incrId = await getCounter("posts");
+    }
+  });
 }
 
 // https://github.com/nextauthjs/next-auth/issues/12224

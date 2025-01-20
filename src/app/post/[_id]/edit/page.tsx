@@ -5,6 +5,7 @@ import {
   Button,
   Container,
   Grid2,
+  Stack,
   TextField,
 } from "@mui/material";
 import { useSession } from "next-auth/react";
@@ -27,6 +28,8 @@ export default function PostEdit({
   const [title, setTitle] = React.useState("");
   const [createdAt, setCreatedAt] = React.useState(dayjs());
   const [tags, setTags] = React.useState<string[]>([]);
+  const [incrId, setIncrId] = React.useState(0);
+  const [slug, setSlug] = React.useState("");
 
   const session = useSession();
   const { _id } = React.use(params);
@@ -44,6 +47,8 @@ export default function PostEdit({
       setTitle(post.title);
       setCreatedAt(dayjs(post.createdAt));
       setTags(post.tags || []);
+      setIncrId(post.incrId || 0);
+      setSlug(post.slug || "");
     }
   }, [post]);
 
@@ -69,6 +74,7 @@ export default function PostEdit({
           src,
           userId,
           tags,
+          slug,
           createdAt: createdAt.toDate(),
           updatedAt: now,
           __ObjectIDs: ["userId"],
@@ -97,6 +103,7 @@ export default function PostEdit({
           createdAt: createdAt.toDate(),
           updatedAt: now,
           tags,
+          slug,
         };
         console.log("update", doc);
         Posts.update({ _id }, { $set: doc });
@@ -118,7 +125,7 @@ export default function PostEdit({
         }
       }
     },
-    [title, src, _id, router, userId, createdAt, tags]
+    [title, src, _id, router, userId, createdAt, tags, slug]
   );
 
   if (session?.status !== "authenticated") return "Log in first";
@@ -170,7 +177,20 @@ export default function PostEdit({
                 />
               )}
             />
-            <br />
+            <Stack direction="row" spacing={1} sx={{ my: 2 }}>
+              <TextField
+                label="id"
+                value={incrId}
+                sx={{ width: 100 }}
+                disabled
+              />
+              <TextField
+                label="slug"
+                value={slug}
+                fullWidth
+                onChange={(e) => setSlug(e.target.value)}
+              />
+            </Stack>
             <Button type="submit" variant="contained">
               Save
             </Button>
