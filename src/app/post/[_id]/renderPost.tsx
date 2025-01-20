@@ -5,10 +5,15 @@ import { formatDate } from "@/lib/format";
 import { Post } from "@/schemas";
 
 export default function RenderPost({ post }: { post: Post }) {
+  const createdAt =
+    typeof post.createdAt === "string"
+      ? new Date(post.createdAt)
+      : post.createdAt;
+
   return (
     <Container>
       <Typography variant="h5">{post.title}</Typography>
-      {formatDate(post.createdAt)} by gadicc
+      {formatDate(createdAt)} by gadicc
       <span>
         {post.tags?.map((tag) => (
           <Chip key={tag} label={tag} />
