@@ -1,6 +1,6 @@
 import React from "react";
 // import { unstable_cache } from "next/cache";
-import { Container, Typography } from "@mui/material";
+import { Chip, Container, Typography } from "@mui/material";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -42,11 +42,18 @@ function PostRow({ post }: { post: Post }) {
         <Typography variant="h5">{post.title}</Typography>
       </Link>
       <div>{formatDate(post.createdAt)}</div>
-      <div>
-        {post.tags?.map((tag) => (
-          <span key={tag}>{tag}</span>
-        ))}
-      </div>
+      {post.tags ? (
+        <div style={{ marginBottom: 20 }}>
+          {post.tags.map((tag) => (
+            <Chip
+              key={tag}
+              label={tag}
+              size="small"
+              sx={{ marginRight: 0.5 }}
+            />
+          ))}
+        </div>
+      ) : null}
       <div>
         <Markdown remarkPlugins={remarkPlugins}>
           {post.src.substring(0, 255) + (isTruncated ? "..." : "")}
