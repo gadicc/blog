@@ -8,6 +8,9 @@ import { auth } from "@/auth";
 import Link from "@/lib/link";
 import { Post } from "@/schemas";
 
+export const revalidate = 60;
+export const dynamicParams = true;
+
 const Posts = db.collection<Post>("posts");
 
 function getPost(_id: string) {

@@ -1,27 +1,33 @@
-import { Container, Typography } from "@mui/material";
 import React from "react";
-import { db } from "@/api-lib/db";
-import { Post } from "@/schemas";
-import Link from "@/lib/link";
-import { unstable_cache } from "next/cache";
-import { formatDate } from "@/lib/format";
+// import { unstable_cache } from "next/cache";
+import { Container, Typography } from "@mui/material";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-const remarkPlugins = [remarkGfm];
+import { db } from "@/api-lib/db";
+import { Post } from "@/schemas";
+import Link from "@/lib/link";
+import { formatDate } from "@/lib/format";
 
+export const revalidate = 60;
+export const dynamicParams = true;
+
+const remarkPlugins = [remarkGfm];
 const Posts = db.collection<Post>("posts");
 
-function getPosts() {
-  return unstable_cache(
-    () =>
-      Posts.find({ __deleted: { $exists: false } })
-        .sort({ createdAt: -1 })
-        .toArray(),
+const getPosts = () =>
+  Posts.find({ __deleted: { $exists: false } })
+    .sort({ createdAt: -1 })
+    .toArray();
+
+/*
+const getPostsCached = () =>
+  unstable_cache(
+    getPosts,
     undefined,
     { revalidate: 60 } // 60s i.e. 1m
   )();
-}
+*/
 
 const TRUNCATE_LENGTH = 255;
 function PostRow({ post }: { post: Post }) {
@@ -55,7 +61,6 @@ function PostRow({ post }: { post: Post }) {
 async function Index() {
   const posts =
     process.env.NEXT_PHASE === "phase-production-build" ? [] : await getPosts();
-  console.log("posts", posts);
 
   return (
     <Container>
