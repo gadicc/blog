@@ -3,6 +3,7 @@ import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { formatDate } from "@/lib/format";
 import { Post } from "@/schemas";
+import Copyright from "@/copyright";
 
 export default function RenderPost({ post }: { post: Post }) {
   const createdAt =
@@ -20,6 +21,7 @@ export default function RenderPost({ post }: { post: Post }) {
         ))}
       </span>
       <Markdown remarkPlugins={[remarkGfm]}>{post.src}</Markdown>
+      <Copyright post={post} />
     </Container>
   );
 }
