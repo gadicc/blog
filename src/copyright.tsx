@@ -1,8 +1,16 @@
 import React from "react";
 import type { Post } from "@/schemas";
 
-export default function Copyright({ post }: { post?: { createdAt?: Date } }) {
-  const date = post?.createdAt || new Date();
+export default function Copyright({
+  post,
+}: {
+  post?: { createdAt?: Date | string };
+}) {
+  const date = post?.createdAt
+    ? typeof post.createdAt === "string"
+      ? new Date(post.createdAt)
+      : post.createdAt
+    : new Date();
   const year = date.getFullYear();
 
   return (
