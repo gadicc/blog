@@ -10,6 +10,7 @@ import Link from "@/lib/link";
 import { formatDate } from "@/lib/format";
 import { post2url } from "@/lib/posts";
 import { PostCategories } from "./categories";
+import Copyright from "@/copyright";
 
 export const revalidate = 60;
 export const dynamicParams = true;
@@ -80,6 +81,7 @@ async function Index() {
           <PostRow key={post._id} post={post} />
         ))}
       </ul>
+      <Copyright />
     </Container>
   );
 }
