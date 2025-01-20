@@ -3,7 +3,10 @@ import { Post } from "@/schemas";
 import { getServerSideSitemap } from "next-sitemap";
 import { post2url } from "@/lib/posts";
 
-const ROOT_URL = process.env.ROOT_URL || "https://blog.gadi.cc";
+const ROOT_URL = (process.env.ROOT_URL || "https://blog.gadi.cc").replace(
+  /\/$/,
+  ""
+);
 
 const Posts = db.collection<Post>("posts");
 
