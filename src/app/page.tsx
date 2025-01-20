@@ -9,6 +9,7 @@ import { Post } from "@/schemas";
 import Link from "@/lib/link";
 import { formatDate } from "@/lib/format";
 import { post2url } from "@/lib/posts";
+import { PostCategories } from "./categories";
 
 export const revalidate = 60;
 export const dynamicParams = true;
@@ -41,7 +42,9 @@ function PostRow({ post }: { post: Post }) {
       <Link href={post2url(post)}>
         <Typography variant="h5">{post.title}</Typography>
       </Link>
-      <div>{formatDate(post.createdAt)}</div>
+      <div>
+        {formatDate(post.createdAt)} in <PostCategories post={post} />
+      </div>
       {post.tags ? (
         <div style={{ marginBottom: 20 }}>
           {post.tags.map((tag) => (
