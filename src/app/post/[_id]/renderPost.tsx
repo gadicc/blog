@@ -4,6 +4,7 @@ import remarkGfm from "remark-gfm";
 import { formatDate } from "@/lib/format";
 import { Post } from "@/schemas";
 import Copyright from "@/copyright";
+import { PostCategories } from "@/app/categories";
 
 export default function RenderPost({ post }: { post: Post }) {
   const createdAt =
@@ -14,7 +15,7 @@ export default function RenderPost({ post }: { post: Post }) {
   return (
     <Container>
       <Typography variant="h5">{post.title}</Typography>
-      {formatDate(createdAt)} by gadicc
+      {formatDate(createdAt)} by gadicc in <PostCategories post={post} />
       <span>
         {post.tags?.map((tag) => (
           <Chip key={tag} label={tag} />
