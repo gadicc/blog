@@ -21,7 +21,9 @@ export default function RenderPost({ post }: { post: Post }) {
           <Chip key={tag} label={tag} />
         ))}
       </span>
-      <Markdown remarkPlugins={[remarkGfm]}>{post.src}</Markdown>
+      <div style={{ textAlign: "justify" }}>
+        <Markdown remarkPlugins={[remarkGfm]}>{post.src}</Markdown>
+      </div>
       <Copyright post={post} />
     </Container>
   );
