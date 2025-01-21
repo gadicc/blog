@@ -57,8 +57,9 @@ export const metadata: Metadata = {
   },
   */
   verification: {
-    google: "guHt3hzkAJ0hYCli_eD_e28PDoClPOQyvuAiJvGFo9k",
+    // google: "",
   },
+  authors: [{ name: "gadicc" }, { name: "Gadi Cohen" }],
 };
 
 export const viewport: Viewport = {

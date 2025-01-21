@@ -48,6 +48,8 @@ export async function generateMetadata(
   const post = await getPostByIncrId(incrId);
   if (!post) throw new Error("could not find post with incrId: " + incrId);
 
+  const parent = await _parent;
+
   // optionally access and extend (rather than replace) parent metadata
   // const previousImages = (await parent).openGraph?.images || [];
 
@@ -56,6 +58,7 @@ export async function generateMetadata(
     openGraph: {
       // images: ["/some-specific-page-image.jpg", ...previousImages],
     },
+    keywords: [...(parent.keywords || []), ...(post.tags || [])],
   };
 }
 
