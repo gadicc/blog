@@ -53,7 +53,13 @@ export default function RenderPost({
           <Chip key={tag} label={tag} />
         ))}
       </span>
-      <div style={{ textAlign: "justify" }}>
+      <div
+        style={
+          {
+            // textAlign: "justify"
+          }
+        }
+      >
         <Markdown remarkPlugins={remarkPlugins} components={components}>
           {post.src}
         </Markdown>

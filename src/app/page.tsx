@@ -58,7 +58,13 @@ function PostRow({ post }: { post: Post }) {
           ))}
         </div>
       ) : null}
-      <div style={{ textAlign: "justify" }}>
+      <div
+        style={
+          {
+            // textAlign: "justify"
+          }
+        }
+      >
         <Markdown remarkPlugins={remarkPlugins}>
           {post.src.substring(0, 255) + (isTruncated ? "..." : "")}
         </Markdown>
