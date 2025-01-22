@@ -57,7 +57,7 @@
     "react-filepond": "^7.1.2",
     "react-hook-form": "^7.52.0",
     "react-markdown": "^9.0.3",
-    "react-syntax-highlighter": "15.5.0",
+    "react-syntax-highlighter": "^15.6.1",
     "react-toastify": "10.0.5",
     "rehype-add-classes": "^1.0.0",
     "remark-gfm": "^4.0.0",
