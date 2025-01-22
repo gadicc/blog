@@ -17,7 +17,7 @@ const Posts = db.collection<Post>("posts");
 function getPostByIncrId(incrId: number) {
   return unstable_cache(
     () => Posts.findOne({ incrId }),
-    undefined, // [incrId],
+    [incrId.toString()],
     { revalidate: 60 } // 60s i.e. 1m
   )();
 }
