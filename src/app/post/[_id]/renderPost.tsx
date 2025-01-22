@@ -5,8 +5,15 @@ import { formatDate } from "@/lib/format";
 import { Post } from "@/schemas";
 import Copyright from "@/copyright";
 import { PostCategories } from "@/app/categories";
+import PostViews from "@/lib/PostViews";
 
-export default function RenderPost({ post }: { post: Post }) {
+export default function RenderPost({
+  post,
+  preview,
+}: {
+  post: Post;
+  preview?: boolean;
+}) {
   const createdAt =
     typeof post.createdAt === "string"
       ? new Date(post.createdAt)
@@ -24,6 +31,7 @@ export default function RenderPost({ post }: { post: Post }) {
       <div style={{ textAlign: "justify" }}>
         <Markdown remarkPlugins={[remarkGfm]}>{post.src}</Markdown>
       </div>
+      {!preview && <PostViews _id={post._id.toString()} />}
       <Copyright post={post} />
     </Container>
   );

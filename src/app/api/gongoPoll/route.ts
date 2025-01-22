@@ -102,6 +102,20 @@ if (gs.dba) {
     return result?.count;
   }
 
+  const PageCounts = await db.collection("pageCounts").getReal();
+  async function getPageCountIncr(
+    _id: ObjectId | string,
+    metric: "views" | "interactions" = "views"
+  ) {
+    if (typeof _id === "string") _id = new ObjectId(_id);
+    const result = await PageCounts.findOneAndUpdate(
+      { _id },
+      { $inc: { [metric]: 1 } },
+      { upsert: true, returnDocument: "after" }
+    );
+    return result?.[metric];
+  }
+
   gs.method("getCounter", async (db, opts, { auth }) => {
     const userId = await auth.userId();
     if (!userId) return null;
@@ -116,6 +130,20 @@ if (gs.dba) {
     console.log({ name, result });
     return result;
   });
+
+  gs.method(
+    "getPageCountIncr",
+    async (
+      db,
+      { _id, metric }: { _id: string; metric?: "views" | "interactions" }
+    ) => {
+      if (!metric) metric = "views";
+
+      const result = await getPageCountIncr(_id, metric);
+      console.log({ _id, metric, result });
+      return result;
+    }
+  );
 
   for (const collName of ["users", "posts", "postRevisions"]) {
     const coll = db.collection(collName);

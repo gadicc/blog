@@ -206,6 +206,7 @@ export default function PostEdit({
                 updatedAt: new Date(),
                 tags,
               }}
+              preview
             />
           </Grid2>
         </Grid2>
