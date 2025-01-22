@@ -13,7 +13,7 @@ export const categories: Category[] = [
     id: "tech",
     name: "Tech, Coding, Sysadmin",
     // description: "My Health & Wellness Journey",
-    tags: ["tech", "coding", "sysadmin"],
+    tags: ["tech", "coding", "sysadmin", "linux"],
     // image: "/science.jpg",
   },
   {
