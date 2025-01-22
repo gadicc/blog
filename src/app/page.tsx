@@ -76,7 +76,12 @@ async function Index() {
 
   return (
     <Container>
-      <ul>
+      <ul
+        style={{
+          listStyleType: "none",
+          paddingInlineStart: 0,
+        }}
+      >
         {posts.map((post) => (
           <PostRow key={post._id} post={post} />
         ))}
