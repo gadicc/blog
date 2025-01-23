@@ -12,7 +12,7 @@ import "@/db";
 
 const APP_NAME = "Gadi's Blog";
 const APP_DEFAULT_TITLE = "Gadi's Blog";
-const APP_TITLE_TEMPLATE = "%s - PWA App";
+const APP_TITLE_TEMPLATE = "%s";
 const APP_DESCRIPTION = "gadicc - tech, wellness, magick";
 
 export const metadata: Metadata = {
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   applicationName: APP_NAME,
   title: {
     default: APP_DEFAULT_TITLE,
-    template: APP_TITLE_TEMPLATE,
+    template: APP_TITLE_TEMPLATE + " - Gadi's Blog",
   },
   description: APP_DESCRIPTION,
   appleWebApp: {
