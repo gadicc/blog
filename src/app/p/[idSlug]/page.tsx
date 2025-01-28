@@ -7,7 +7,7 @@ import { Container } from "@mui/material";
 import { auth } from "@/auth";
 import Link from "@/lib/link";
 import { Post } from "@/schemas";
-import { redirect } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 
 export const revalidate = 60;
 export const dynamicParams = true;
@@ -68,7 +68,10 @@ export default async function PostPage({ params }: Props) {
   if (!(incrId && slug)) throw new Error("invalid idSlug: " + idSlug);
 
   const post = await getPostByIncrId(incrId);
-  if (!post) throw new Error("could not find post with incrId: " + incrId);
+  if (!post) {
+    // throw new Error("could not find post with incrId: " + incrId);
+    notFound();
+  }
 
   if (post.slug !== slug) {
     // redirect to correct slug

@@ -1,7 +1,7 @@
 import React from "react";
 import type { Metadata, ResolvingMetadata } from "next";
 import { unstable_cache } from "next/cache";
-import { redirect } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 import { db, ObjectId } from "@/api-lib/db";
 import RenderPost from "./renderPost";
 import { Container } from "@mui/material";
@@ -58,7 +58,10 @@ export default async function PostPage({ params }: Props) {
   const session = await auth();
   const admin = session?.user?.admin;
 
-  if (!post) return "No post found with _id: " + _id;
+  if (!post) {
+    // return "No post found with _id: " + _id;
+    notFound();
+  }
 
   if (post.incrId) {
     redirect(`/p/${post.incrId}-${post.slug}`);
