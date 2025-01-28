@@ -46,13 +46,16 @@ export default function RenderPost({
 
   return (
     <Container>
-      <Typography variant="h5">{post.title}</Typography>
-      {formatDate(createdAt)} by gadicc in <PostCategories post={post} />
-      <span>
-        {post.tags?.map((tag) => (
-          <Chip key={tag} label={tag} />
-        ))}
-      </span>
+      <div style={{ marginBottom: 16 }}>
+        <Typography variant="h5">{post.title}</Typography>
+        {formatDate(createdAt)} by gadicc in <PostCategories post={post} />
+        <div>
+          {post.tags?.map((tag) => (
+            <Chip key={tag} label={tag} sx={{ mx: 0.4 }} />
+          ))}
+        </div>
+      </div>
+
       <div
         style={
           {
@@ -64,6 +67,7 @@ export default function RenderPost({
           {post.src}
         </Markdown>
       </div>
+
       {!preview && <PostViews _id={post._id.toString()} />}
       <Copyright post={post} />
     </Container>
