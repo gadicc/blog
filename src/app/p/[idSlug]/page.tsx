@@ -46,32 +46,11 @@ function extractIncrIdAndSlug(idSlug: string) {
   return { incrId, slug };
 }
 
-export async function generateMetadata(
-  { params }: Props,
-  _parent: ResolvingMetadata
-): Promise<Metadata> {
-  const { idSlug } = await params;
-  const post = await getPostByIdSlug(idSlug);
-
-  const parent = await _parent;
-
-  // optionally access and extend (rather than replace) parent metadata
-  // const previousImages = (await parent).openGraph?.images || [];
-
-  return {
-    title: post.title,
-    openGraph: {
-      // images: ["/some-specific-page-image.jpg", ...previousImages],
-    },
-    keywords: [...(parent.keywords || []), ...(post.tags || [])],
-  };
-}
-
-export async function getPostByIdSlug(idSlug: string) {
+async function getPostByIdSlug(idSlug: string) {
   const { incrId, slug } = extractIncrIdAndSlug(idSlug);
   if (!(incrId || slug)) throw new Error("invalid idSlug: " + idSlug);
 
-  let post;
+  let post: Post | null = null;
 
   if (incrId) {
     post = await getPostByIncrId(incrId);
@@ -93,6 +72,27 @@ export async function getPostByIdSlug(idSlug: string) {
   }
 
   return post;
+}
+
+export async function generateMetadata(
+  { params }: Props,
+  _parent: ResolvingMetadata
+): Promise<Metadata> {
+  const { idSlug } = await params;
+  const post = await getPostByIdSlug(idSlug);
+
+  const parent = await _parent;
+
+  // optionally access and extend (rather than replace) parent metadata
+  // const previousImages = (await parent).openGraph?.images || [];
+
+  return {
+    title: post.title,
+    openGraph: {
+      // images: ["/some-specific-page-image.jpg", ...previousImages],
+    },
+    keywords: [...(parent.keywords || []), ...(post.tags || [])],
+  };
 }
 
 export default async function PostPage({ params }: Props) {
