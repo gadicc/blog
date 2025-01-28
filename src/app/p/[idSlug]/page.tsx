@@ -8,6 +8,7 @@ import { auth } from "@/auth";
 import Link from "@/lib/link";
 import { Post } from "@/schemas";
 import { redirect, notFound } from "next/navigation";
+import { get } from "react-hook-form";
 
 export const revalidate = 60;
 export const dynamicParams = true;
@@ -22,6 +23,14 @@ function getPostByIncrId(incrId: number) {
   )();
 }
 
+function getPostBySlug(slug: string) {
+  return unstable_cache(
+    () => Posts.findOne({ slug }),
+    [slug],
+    { revalidate: 60 } // 60s i.e. 1m
+  )();
+}
+
 type Props = {
   params: Promise<{ idSlug: string }>;
   // searchParams: Promise<{ [key: string]: string | string[] | undefined }>
@@ -29,9 +38,9 @@ type Props = {
 
 function extractIncrIdAndSlug(idSlug: string) {
   const [incrId, slug] = (() => {
-    const m = idSlug.match(/^(\d+)-(.+)$/);
+    const m = idSlug.match(/^((?<incrId>\d+)-)?(?<slug>.+)$/);
     if (!m) return [null, null];
-    return [parseInt(m[1]), m[2]];
+    return [parseInt(m.groups!.incrId), m.groups!.slug];
   })();
 
   return { incrId, slug };
@@ -42,11 +51,7 @@ export async function generateMetadata(
   _parent: ResolvingMetadata
 ): Promise<Metadata> {
   const { idSlug } = await params;
-  const { incrId, slug } = extractIncrIdAndSlug(idSlug);
-  if (!(incrId && slug)) throw new Error("invalid idSlug: " + idSlug);
-
-  const post = await getPostByIncrId(incrId);
-  if (!post) throw new Error("could not find post with incrId: " + incrId);
+  const post = await getPostByIdSlug(idSlug);
 
   const parent = await _parent;
 
@@ -62,21 +67,37 @@ export async function generateMetadata(
   };
 }
 
-export default async function PostPage({ params }: Props) {
-  const { idSlug } = await params;
+export async function getPostByIdSlug(idSlug: string) {
   const { incrId, slug } = extractIncrIdAndSlug(idSlug);
-  if (!(incrId && slug)) throw new Error("invalid idSlug: " + idSlug);
+  if (!(incrId || slug)) throw new Error("invalid idSlug: " + idSlug);
 
-  const post = await getPostByIncrId(incrId);
+  let post;
+
+  if (incrId) {
+    post = await getPostByIncrId(incrId);
+  } else if (slug) {
+    post = await getPostBySlug(slug);
+  }
+
+  if (!post && incrId && slug) {
+    // Slug that starts with a number
+    post = await getPostBySlug(idSlug);
+  }
+
   if (!post) {
-    // throw new Error("could not find post with incrId: " + incrId);
     notFound();
   }
 
-  if (post.slug !== slug) {
-    // redirect to correct slug
-    redirect(`/p/${incrId}-${post.slug}`);
+  if (!(post.slug === slug && post.incrId === incrId)) {
+    redirect(`/p/${post.incrId}-${post.slug}`);
   }
+
+  return post;
+}
+
+export default async function PostPage({ params }: Props) {
+  const { idSlug } = await params;
+  const post = await getPostByIdSlug(idSlug);
 
   const session = await auth();
   const admin = session?.user?.admin;
