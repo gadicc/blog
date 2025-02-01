@@ -4,7 +4,7 @@ import { Chip, Container, Typography } from "@mui/material";
 import Markdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-import { db } from "@/api-lib/db";
+import { db, fetchOptionsOnce } from "@/api-lib/db";
 import { Post } from "@/schemas";
 import Link from "@/lib/link";
 import { formatDate } from "@/lib/format";
@@ -18,10 +18,12 @@ export const dynamicParams = true;
 const remarkPlugins = [remarkGfm];
 const Posts = db.collection<Post>("posts");
 
-const getPosts = () =>
-  Posts.find({ __deleted: { $exists: false } })
+function getPosts() {
+  fetchOptionsOnce({ next: { revalidate: 60 } });
+  return Posts.find({ __deleted: { $exists: false } })
     .sort({ createdAt: -1 })
     .toArray();
+}
 
 /*
 const getPostsCached = () =>
