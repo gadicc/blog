@@ -48,7 +48,7 @@
     "luxon": "^2.0.2",
     "magic-string": "^0.30.10",
     "mongodb": "6.2.0",
-    "mongodb-rest-relay": "^1.11.0",
+    "mongodb-rest-relay": "^1.12.0",
     "music-metadata": "7.14.0",
     "next": "15.1.0",
     "next-auth": "^5.0.0-beta.25",
