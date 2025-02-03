@@ -7,6 +7,8 @@ import {
 import gs, { ObjectId /* User */ } from "@/api-lib/db";
 import { ChangeSetUpdate } from "gongo-server/lib/DatabaseAdapter";
 import { auth } from "@/auth";
+import { NextRequest } from "next/server";
+import { geolocation } from "@vercel/functions";
 
 // TODO, later... with separate db.ts and db-full.ts and mongodb-rest-relay.
 // export const runtime = "edge";
@@ -85,37 +87,54 @@ gs.publish("postRevisions", async (db, opts) => {
   return db.collection("postRevisions").find({ postId });
 });
 
+interface Counter {
+  _id: string;
+  count: number;
+}
+
+const db = gs.dba!;
+const Counters = await db.collection<Counter>("counters").getReal();
+const PageCounts = await db.collection("pageCounts").getReal();
+
+async function getCounter(name: string) {
+  const result = await Counters.findOneAndUpdate(
+    { _id: name },
+    { $inc: { count: 1 } },
+    { upsert: true, returnDocument: "after" }
+  );
+  return result?.count;
+}
+
+async function getPageCountIncr(
+  _id: ObjectId | string,
+  metric: "views" | "interactions" = "views",
+  request: NextRequest
+) {
+  // console.log("request", request);
+  const referrer = request.referrer;
+  const refUrl = new URL(referrer);
+
+  const geo = geolocation(request);
+  console.log(geo);
+  console.log(request);
+  const { country } = geolocation(request);
+
+  if (typeof _id === "string") _id = new ObjectId(_id);
+  const result = await PageCounts.findOneAndUpdate(
+    { _id },
+    {
+      $inc: {
+        [metric]: 1,
+        [`${metric}ByReferrer.${refUrl.origin}`]: 1,
+        [`${metric}ByCountry.${country}`]: 1,
+      },
+    },
+    { upsert: true, returnDocument: "after" }
+  );
+  return result?.[metric];
+}
+
 if (gs.dba) {
-  const db = gs.dba;
-
-  interface Counter {
-    _id: string;
-    count: number;
-  }
-  const Counters = await db.collection<Counter>("counters").getReal();
-  async function getCounter(name: string) {
-    const result = await Counters.findOneAndUpdate(
-      { _id: name },
-      { $inc: { count: 1 } },
-      { upsert: true, returnDocument: "after" }
-    );
-    return result?.count;
-  }
-
-  const PageCounts = await db.collection("pageCounts").getReal();
-  async function getPageCountIncr(
-    _id: ObjectId | string,
-    metric: "views" | "interactions" = "views"
-  ) {
-    if (typeof _id === "string") _id = new ObjectId(_id);
-    const result = await PageCounts.findOneAndUpdate(
-      { _id },
-      { $inc: { [metric]: 1 } },
-      { upsert: true, returnDocument: "after" }
-    );
-    return result?.[metric];
-  }
-
   gs.method("getCounter", async (db, opts, { auth }) => {
     const userId = await auth.userId();
     if (!userId) return null;
@@ -135,11 +154,17 @@ if (gs.dba) {
     "getPageCountIncr",
     async (
       db,
-      { _id, metric }: { _id: string; metric?: "views" | "interactions" }
+      { _id, metric }: { _id: string; metric?: "views" | "interactions" },
+      { request }
     ) => {
       if (!metric) metric = "views";
+      // console.log(req);
 
-      const result = await getPageCountIncr(_id, metric);
+      const result = await getPageCountIncr(
+        _id,
+        metric,
+        request as NextRequest
+      );
       console.log({ _id, metric, result });
       return result;
     }

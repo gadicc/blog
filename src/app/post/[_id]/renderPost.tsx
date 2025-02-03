@@ -9,7 +9,6 @@ import { formatDate } from "@/lib/format";
 import { Post } from "@/schemas";
 import Copyright from "@/copyright";
 import { PostCategories } from "@/app/categories";
-import PostViews from "@/lib/PostViews";
 
 const remarkPlugins = [remarkGfm];
 const components = {
@@ -20,6 +19,7 @@ const components = {
       <SyntaxHighlighter
         {...rest}
         PreTag="div"
+        // eslint-disable-next-line react/no-children-prop
         children={String(children).replace(/\n$/, "")}
         language={match[1]}
         style={style}
@@ -68,7 +68,6 @@ export default function RenderPost({
         </Markdown>
       </div>
 
-      {!preview && <PostViews _id={post._id.toString()} />}
       <Copyright post={post} />
     </Container>
   );

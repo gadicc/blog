@@ -8,7 +8,7 @@ import { auth } from "@/auth";
 import Link from "@/lib/link";
 import { Post } from "@/schemas";
 import { redirect, notFound } from "next/navigation";
-import { get } from "react-hook-form";
+import PostViews from "../../post/[_id]/PostViews";
 
 export const revalidate = 60;
 export const dynamicParams = true;
@@ -105,6 +105,12 @@ export default async function PostPage({ params }: Props) {
   return (
     <Container sx={{ my: 2 }}>
       <RenderPost post={post} />
+
+      <React.Suspense>
+        {/* @ts-expect-error: its ok */}
+        <PostViews _id={post._id.toString()} />
+      </React.Suspense>
+
       {admin && <Link href={`/post/${post._id}/edit`}>Edit</Link>}
     </Container>
   );

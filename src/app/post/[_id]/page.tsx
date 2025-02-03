@@ -8,6 +8,7 @@ import { Container } from "@mui/material";
 import { auth } from "@/auth";
 import Link from "@/lib/link";
 import { Post } from "@/schemas";
+import PostViews from "./PostViews";
 
 export const revalidate = 60;
 export const dynamicParams = true;
@@ -70,6 +71,12 @@ export default async function PostPage({ params }: Props) {
   return (
     <Container sx={{ my: 2 }}>
       <RenderPost post={post} />
+
+      <React.Suspense>
+        {/* @ts-expect-error: its ok */}
+        <PostViews _id={post._id.toString()} />
+      </React.Suspense>
+
       {admin && <Link href={`/post/${_id}/edit`}>Edit</Link>}
     </Container>
   );
