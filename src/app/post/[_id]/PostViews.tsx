@@ -109,6 +109,9 @@ async function getPageCountIncr(
   return resolveObject(readPromises);
 }
 
+const pctPar = (n, d, p = 0) =>
+  "(" + (d ? ((n / d) * 100).toFixed(p) : 0) + "%)";
+
 export default async function PageViews({
   _id,
   metric = "views",
@@ -137,8 +140,23 @@ export default async function PageViews({
   */
 
   return (
-    <div>
-      <small>This post has been viewed {views} times.</small>
+    <div style={{ fontSize: "80%" }}>
+      <span>This post has been viewed {views} times.</span>
+      <span>
+        {" "}
+        Top countries:{" "}
+        {pageData.topCountries
+          ?.map((c) => c.country + " " + pctPar(c.views, views))
+          .join(", ")}
+        .
+      </span>{" "}
+      <span>
+        Top referers:{" "}
+        {pageData.topRefererHostnames
+          ?.map((r) => r.hostname + " " + pctPar(r.views, views))
+          .join(", ")}
+        .
+      </span>
     </div>
   );
 }
