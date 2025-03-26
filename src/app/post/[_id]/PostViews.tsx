@@ -5,6 +5,7 @@ import React from "react";
 import { geolocation } from "@vercel/functions";
 import { headers as getHeaders } from "next/headers";
 import { db, ObjectId, fetchOptionsOnce } from "@/api-lib/db";
+import getUnicodeFlagIcon from "country-flag-icons/unicode";
 
 export const dynamic = "force-dynamic";
 
@@ -67,14 +68,14 @@ async function getPageCountIncr(
     topCountries: (async () => {
       fetchOptionsOnce({ next: { revalidate: 60 } });
       return PageCountsCountry.find({ postId })
-        .sort({ count: -1 })
+        .sort({ [metric]: -1 })
         .limit(5)
         .toArray();
     })(),
     topRefererHostnames: (async () => {
       fetchOptionsOnce({ next: { revalidate: 60 } });
       return PageCountsRefererHostnames.find({ postId })
-        .sort({ count: -1 })
+        .sort({ [metric]: -1 })
         .limit(5)
         .toArray();
     })(),
@@ -82,22 +83,22 @@ async function getPageCountIncr(
   };
 
   const writePromises = {
-    pageCount: PageCounts.findOneAndUpdate(
+    pageCount: PageCounts.updateOne(
       { postId },
       { $inc: { [metric]: 1 } },
       { upsert: true }
     ),
-    pageCountCountries: PageCountsCountry.findOneAndUpdate(
+    pageCountCountries: PageCountsCountry.updateOne(
       { postId, country },
       { $inc: { [metric]: 1 } },
       { upsert: true }
     ),
-    pageCountReferers: PageCountsReferers.findOneAndUpdate(
+    pageCountReferers: PageCountsReferers.updateOne(
       { postId, referer },
       { $inc: { [metric]: 1 } },
       { upsert: true }
     ),
-    pageCountRefererHostnames: PageCountsRefererHostnames.findOneAndUpdate(
+    pageCountRefererHostnames: PageCountsRefererHostnames.updateOne(
       { postId, hostname },
       { $inc: { [metric]: 1 } },
       { upsert: true }
@@ -140,23 +141,53 @@ export default async function PageViews({
   */
 
   return (
-    <div style={{ fontSize: "80%" }}>
+    <div style={{ fontSize: "80%", textAlign: "center" }}>
       <span>This post has been viewed {views} times.</span>
+      <br />
       <span>
         {" "}
         Top countries:{" "}
-        {pageData.topCountries
-          ?.map((c) => c.country + " " + pctPar(c.views, views))
-          .join(", ")}
-        .
-      </span>{" "}
+        {pageData.topCountries?.map((c, i) => {
+          // c.country = 'za';
+          const unicode = c.country && getUnicodeFlagIcon(c.country);
+          return (
+            <span key={i}>
+              {unicode ? (
+                <a title={c.country} style={{ cursor: "pointer" }}>
+                  {getUnicodeFlagIcon(c.country)}
+                </a>
+              ) : (
+                c.country || "Unknown"
+              )}{" "}
+              {pctPar(c.views, views)}
+              {i < pageData.topCountries.length - 1 ? ", " : "."}
+            </span>
+          );
+        })}
+      </span>
+      <br />
       <span>
         Top referers:{" "}
-        {pageData.topRefererHostnames
-          ?.map((r) => r.hostname + " " + pctPar(r.views, views))
-          .join(", ")}
-        .
+        {pageData.topRefererHostnames?.map((r, i) => {
+          // r.hostname = "www.google.com";
+          const url = r.hostname && "http://" + r.hostname + "/favicon.ico";
+          return (
+            <span key={r.hostname}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={url}
+                title={r.hostname}
+                alt={r.hostname + " favicon"}
+                style={{ width: 16, height: 16, verticalAlign: "middle" }}
+              />{" "}
+              {pctPar(r.views, views)}
+              {i < pageData.topRefererHostnames.length - 1 ? ", " : "."}
+            </span>
+          );
+        })}
       </span>
+      <br />
+      <span>These stats are cached and do not update immediately.</span>
     </div>
   );
 }
