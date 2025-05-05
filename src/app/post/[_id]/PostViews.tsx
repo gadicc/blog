@@ -148,13 +148,21 @@ export default async function PageViews({
         {" "}
         Top countries:{" "}
         {pageData.topCountries?.map((c, i) => {
-          // c.country = 'za';
+          // c.country = "za";
           const unicode = c.country && getUnicodeFlagIcon(c.country);
           return (
             <span key={i}>
               {unicode ? (
-                <a title={c.country} style={{ cursor: "pointer" }}>
-                  {getUnicodeFlagIcon(c.country)}
+                <span>
+                  {getUnicodeFlagIcon(c.country)} {c.country.toUpperCase()}
+                </span>
+              ) : c.country ? (
+                <a
+                  href={`https://en.wikipedia.org/wiki/${c.country}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {c.country.toUpperCase()}
                 </a>
               ) : (
                 c.country || "Unknown"
@@ -169,17 +177,22 @@ export default async function PageViews({
       <span>
         Top referers:{" "}
         {pageData.topRefererHostnames?.map((r, i) => {
+          // r.hostname = null;
           // r.hostname = "www.google.com";
           const url = r.hostname && "http://" + r.hostname + "/favicon.ico";
           return (
             <span key={r.hostname}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={url}
-                title={r.hostname}
-                alt={r.hostname + " favicon"}
-                style={{ width: 16, height: 16, verticalAlign: "middle" }}
-              />{" "}
+              {r.hostname ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img
+                  src={url}
+                  title={r.hostname}
+                  alt={r.hostname + " favicon"}
+                  style={{ width: 16, height: 16, verticalAlign: "middle" }}
+                />
+              ) : (
+                "Unknown"
+              )}{" "}
               {pctPar(r.views, views)}
               {i < pageData.topRefererHostnames.length - 1 ? ", " : "."}
             </span>
