@@ -9,5 +9,6 @@ export interface Post {
   userId: string;
   createdAt: Date;
   updatedAt: Date;
+  description?: string;
   tags?: string[];
 }

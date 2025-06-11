@@ -27,6 +27,7 @@ export default function PostEdit({
   const [src, setSrc] = React.useState("");
   const [title, setTitle] = React.useState("");
   const [createdAt, setCreatedAt] = React.useState(dayjs());
+  const [description, setDescription] = React.useState("");
   const [tags, setTags] = React.useState<string[]>([]);
   const [incrId, setIncrId] = React.useState(0);
   const [slug, setSlug] = React.useState("");
@@ -46,6 +47,7 @@ export default function PostEdit({
       setSrc(post.src);
       setTitle(post.title);
       setCreatedAt(dayjs(post.createdAt));
+      setDescription(post.description || "");
       setTags(post.tags || []);
       setIncrId(post.incrId || 0);
       setSlug(post.slug || "");
@@ -74,6 +76,7 @@ export default function PostEdit({
           src,
           userId,
           tags,
+          description,
           slug,
           createdAt: createdAt.toDate(),
           updatedAt: now,
@@ -102,6 +105,7 @@ export default function PostEdit({
           src,
           createdAt: createdAt.toDate(),
           updatedAt: now,
+          description,
           tags,
           slug,
         };
@@ -125,7 +129,7 @@ export default function PostEdit({
         }
       }
     },
-    [title, src, _id, router, userId, createdAt, tags, slug]
+    [title, src, _id, router, userId, createdAt, description, tags, slug]
   );
 
   if (session?.status !== "authenticated") return "Log in first";
@@ -155,6 +159,14 @@ export default function PostEdit({
               value={createdAt}
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               onChange={setCreatedAt as any}
+              sx={{ mb: 2 }}
+            />
+            <br />
+            <TextField
+              label="Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              fullWidth
               sx={{ mb: 2 }}
             />
             <br />
