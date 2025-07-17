@@ -4,7 +4,7 @@ import {
   Autocomplete,
   Button,
   Container,
-  Grid2,
+  Grid,
   Stack,
   TextField,
 } from "@mui/material";
@@ -137,8 +137,8 @@ export default function PostEdit({
   return (
     <Container sx={{ my: 3 }}>
       <form onSubmit={save}>
-        <Grid2 container spacing={2}>
-          <Grid2 size={6}>
+        <Grid container spacing={2}>
+          <Grid size={6}>
             <TextField
               label="Title"
               value={title}
@@ -206,8 +206,8 @@ export default function PostEdit({
             <Button type="submit" variant="contained">
               Save
             </Button>
-          </Grid2>
-          <Grid2 size={6}>
+          </Grid>
+          <Grid size={6}>
             <RenderPost
               post={{
                 _id,
@@ -220,8 +220,8 @@ export default function PostEdit({
               }}
               preview
             />
-          </Grid2>
-        </Grid2>
+          </Grid>
+        </Grid>
       </form>
     </Container>
   );
