@@ -51,7 +51,7 @@
     "mongodb": "6.2.0",
     "mongodb-rest-relay": "^1.12.0",
     "music-metadata": "7.14.0",
-    "next": "15.1.0",
+    "next": "15.4.1",
     "next-auth": "^5.0.0-beta.25",
     "radash": "^12.1.0",
     "react": "19.0.0",
