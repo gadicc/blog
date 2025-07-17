@@ -14,6 +14,23 @@ const theme = createTheme({
   },
   typography: {
     fontFamily: roboto.style.fontFamily,
+    h1: {
+      fontSize: "2.125rem",
+      fontWeight: 500,
+    },
+    /*
+    mui bug?  these don't work
+    h2: {
+      fontSize: "1.5rem",
+      fontWeight: 400,
+      color: "red",
+    },
+    h3: {
+      fontSize: "1.25rem",
+      fontWeight: 200,
+      color: "red",
+    },
+    */
   },
   components: {
     MuiAlert: {

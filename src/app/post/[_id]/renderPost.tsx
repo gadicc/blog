@@ -47,7 +47,7 @@ export default function RenderPost({
   return (
     <Container>
       <div style={{ marginBottom: 16 }}>
-        <Typography variant="h5">{post.title}</Typography>
+        <Typography variant="h1">{post.title}</Typography>
         {formatDate(createdAt)} by gadicc in <PostCategories post={post} />
         <div>
           {post.tags?.map((tag) => (
