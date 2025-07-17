@@ -44,11 +44,11 @@ export async function generateMetadata(
 
   return {
     title: post.title,
-    description: post.description || parent.description,
+    description: post.description, //  || parent.description,
     openGraph: {
       // images: ["/some-specific-page-image.jpg", ...previousImages],
     },
-    keywords: [...(parent.keywords || []), ...(post.tags || [])],
+    keywords: [...(parent.keywords || [])], // ...(post.tags || [])],
   };
 }
 
