@@ -38,6 +38,7 @@ export async function generateMetadata(
   if (!post) throw new Error("could not find post with _id: " + _id);
 
   const parent = await _parent;
+  console.log("generateMetadata", post);
 
   // optionally access and extend (rather than replace) parent metadata
   // const previousImages = (await parent).openGraph?.images || [];
@@ -46,7 +47,15 @@ export async function generateMetadata(
     title: post.title,
     description: post.description, //  || parent.description,
     openGraph: {
+      type: "article",
+      title: post.title,
+      description: post.description,
+      siteName: parent.openGraph?.siteName,
       // images: ["/some-specific-page-image.jpg", ...previousImages],
+    },
+    twitter: {
+      title: post.title,
+      description: post.description,
     },
     keywords: [...(parent.keywords || [])], // ...(post.tags || [])],
   };
