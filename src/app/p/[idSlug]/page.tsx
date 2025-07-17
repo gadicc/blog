@@ -9,6 +9,7 @@ import Link from "@/lib/link";
 import { Post } from "@/schemas";
 import { redirect, notFound } from "next/navigation";
 import PostViews from "../../post/[_id]/PostViews";
+import MetadataMap from "../../post/[_id]/metadataMap";
 
 export const revalidate = 60;
 export const dynamicParams = true;
@@ -76,23 +77,12 @@ async function getPostByIdSlug(idSlug: string) {
 
 export async function generateMetadata(
   { params }: Props,
-  _parent: ResolvingMetadata
+  parent: ResolvingMetadata
 ): Promise<Metadata> {
   const { idSlug } = await params;
   const post = await getPostByIdSlug(idSlug);
 
-  const parent = await _parent;
-
-  // optionally access and extend (rather than replace) parent metadata
-  // const previousImages = (await parent).openGraph?.images || [];
-
-  return {
-    title: post.title,
-    openGraph: {
-      // images: ["/some-specific-page-image.jpg", ...previousImages],
-    },
-    keywords: [...(parent.keywords || []), ...(post.tags || [])],
-  };
+  return await MetadataMap(post, parent);
 }
 
 export default async function PostPage({ params }: Props) {

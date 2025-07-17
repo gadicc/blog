@@ -9,6 +9,7 @@ import { auth } from "@/auth";
 import Link from "@/lib/link";
 import { Post } from "@/schemas";
 import PostViews from "./PostViews";
+import MetadataMap from "./metadataMap";
 
 export const revalidate = 60;
 export const dynamicParams = true;
@@ -31,34 +32,13 @@ type Props = {
 
 export async function generateMetadata(
   { params }: Props,
-  _parent: ResolvingMetadata
+  parent: ResolvingMetadata
 ): Promise<Metadata> {
   const { _id } = await params;
   const post = await getPost(_id);
   if (!post) throw new Error("could not find post with _id: " + _id);
 
-  const parent = await _parent;
-  console.log("generateMetadata", post);
-
-  // optionally access and extend (rather than replace) parent metadata
-  // const previousImages = (await parent).openGraph?.images || [];
-
-  return {
-    title: post.title,
-    description: post.description, //  || parent.description,
-    openGraph: {
-      type: "article",
-      title: post.title,
-      description: post.description,
-      siteName: parent.openGraph?.siteName,
-      // images: ["/some-specific-page-image.jpg", ...previousImages],
-    },
-    twitter: {
-      title: post.title,
-      description: post.description,
-    },
-    keywords: [...(parent.keywords || [])], // ...(post.tags || [])],
-  };
+  return await MetadataMap(post, parent);
 }
 
 export default async function PostPage({ params }: Props) {
